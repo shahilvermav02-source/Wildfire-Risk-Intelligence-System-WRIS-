@@ -1,0 +1,16 @@
+{
+  "data": {
+    "url": "https://archive.ics.uci.edu/ml/machine-learning-databases/forest-fires/forestfires.csv",
+    "raw_path": "data/raw/forestfires.csv"
+  },
+  "model": {
+    "target": "area",
+    "test_size": 0.2,
+    "random_state": 42,
+    "k_neighbors": 7
+  },
+  "artifacts": {
+    "model_path": "data/processed/wris_model.pkl",
+    "metrics_path": "data/processed/metrics.json"
+  }
+}

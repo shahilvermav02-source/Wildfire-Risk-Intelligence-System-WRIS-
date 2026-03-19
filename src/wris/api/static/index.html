@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WRIS GUI</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 24px; background: #f7f9fc; }
+    .card { background: #fff; border-radius: 12px; padding: 16px; max-width: 780px; box-shadow: 0 3px 12px rgba(0,0,0,0.1); }
+    h1 { margin-top: 0; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    label { font-size: 13px; color: #333; }
+    input, select { width: 100%; padding: 8px; border: 1px solid #cfd5e1; border-radius: 8px; }
+    button { margin-top: 12px; padding: 10px 14px; border: 0; border-radius: 8px; background: #1f6feb; color: white; cursor: pointer; }
+    #result { margin-top: 14px; padding: 12px; border-radius: 8px; background: #eef5ff; }
+    .muted { color: #6b7280; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Wildfire Risk Intelligence System (WRIS)</h1>
+    <p class="muted">Fill conditions and click <b>Predict Risk</b>.</p>
+    <div class="grid" id="form"></div>
+    <button onclick="predictRisk()">Predict Risk</button>
+    <div id="result">Result will appear here.</div>
+  </div>
+
+<script>
+const fields = [
+  ["x", 7.4], ["y", 4.1], ["month", "aug"], ["day", "fri"], ["ffmc", 91.5], ["dmc", 145.4],
+  ["dc", 678.2], ["isi", 8.3], ["temp", 29.1], ["rh", 35], ["wind", 3.6], ["rain", 0.0]
+];
+
+const form = document.getElementById('form');
+for (const [name, value] of fields) {
+  const wrap = document.createElement('div');
+  const label = document.createElement('label');
+  label.textContent = name;
+  const input = document.createElement('input');
+  input.id = name;
+  input.value = value;
+  wrap.appendChild(label);
+  wrap.appendChild(input);
+  form.appendChild(wrap);
+}
+
+async function predictRisk() {
+  const payload = {};
+  for (const [name, value] of fields) {
+    const raw = document.getElementById(name).value;
+    payload[name] = (name === 'month' || name === 'day') ? raw : Number(raw);
+  }
+
+  const resultDiv = document.getElementById('result');
+  resultDiv.textContent = 'Predicting...';
+
+  try {
+    const res = await fetch('/predict', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      resultDiv.textContent = `Error: ${data.error || 'Unknown error'}`;
+      return;
+    }
+
+    resultDiv.innerHTML = `
+      <b>Risk Level:</b> ${data.risk_level}<br/>
+      <b>Risk Score:</b> ${data.risk_score.toFixed(3)}<br/>
+      <b>Estimated Burned Area:</b> ${data.burned_area_estimate.toFixed(3)}
+    `;
+  } catch (err) {
+    resultDiv.textContent = `Error: ${err.message}`;
+  }
+}
+</script>
+</body>
+</html>
