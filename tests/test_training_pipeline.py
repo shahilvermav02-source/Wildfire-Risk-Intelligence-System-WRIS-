@@ -22,4 +22,4 @@ def test_train_and_evaluate_returns_metrics_and_model() -> None:
     )
 
     assert model is not None
-    assert set(metrics.keys()) == {"mae", "rmse", "r2"}
+    assert {"mae", "rmse", "r2", "k_selected", "k_config"}.issubset(set(metrics.keys()))

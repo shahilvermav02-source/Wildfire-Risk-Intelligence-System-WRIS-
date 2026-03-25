@@ -7,7 +7,7 @@ It downloads the UCI Forest Fires dataset from the internet, trains a model, and
 
 - **Data Layer (`wris.data`)**: Downloads and loads wildfire CSV data.
 - **Feature Layer (`wris.features`)**: Converts month/day and weather conditions to model-ready numeric vectors.
-- **Model Layer (`wris.models`)**: Trains a KNN regressor and evaluates metrics.
+- **Model Layer (`wris.models`)**: Trains a weighted KNN regressor with simple cross-validation tuning and evaluates metrics.
 - **Service Layer (`wris.services`)**: Loads saved model artifacts and computes risk score/level.
 - **API + GUI Layer (`wris.api`)**: Standard-library HTTP server with `/health`, `/predict`, and GUI routes (`/`, `/gui`).
 
