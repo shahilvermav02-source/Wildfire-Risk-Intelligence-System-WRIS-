@@ -1,5 +1,9 @@
 import json
 
+from _bootstrap_path import bootstrap_src_path
+
+bootstrap_src_path()
+
 from wris.config.settings import load_settings
 from wris.data.ingestion import load_rows
 from wris.models.training import save_artifacts, train_and_evaluate

@@ -1,3 +1,7 @@
+from _bootstrap_path import bootstrap_src_path
+
+bootstrap_src_path()
+
 from wris.api.app import run_server
 
 
