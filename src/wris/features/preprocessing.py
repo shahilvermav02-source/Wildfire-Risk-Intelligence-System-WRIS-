@@ -10,15 +10,32 @@ DAY_TO_IDX = {d: i + 1 for i, d in enumerate(DAY_ORDER)}
 BASE_FEATURES = ["x", "y", "ffmc", "dmc", "dc", "isi", "temp", "rh", "wind", "rain"]
 
 
+
+def _normalize_key(key: str) -> str:
+    return key.strip().lower().replace(" ", "")
+
+
+def _canonical_row(row: dict[str, str | float | int]) -> dict[str, str | float | int]:
+    return {_normalize_key(k): v for k, v in row.items()}
+
+
+def _get_required_value(row: dict[str, str | float | int], key: str) -> str | float | int:
+    canonical = _canonical_row(row)
+    normalized = _normalize_key(key)
+    if normalized not in canonical:
+        raise KeyError(f"Missing required field '{key}' in input row. Available keys: {list(canonical.keys())}")
+    return canonical[normalized]
+
+
 def row_to_features(row: dict[str, str | float | int]) -> list[float]:
-    month = str(row["month"]).strip().lower()
-    day = str(row["day"]).strip().lower()
+    month = str(_get_required_value(row, "month")).strip().lower()
+    day = str(_get_required_value(row, "day")).strip().lower()
     month_idx = MONTH_TO_IDX.get(month, 1)
     day_idx = DAY_TO_IDX.get(day, 1)
 
     values: list[float] = []
     for name in BASE_FEATURES:
-        values.append(float(row[name]))
+        values.append(float(_get_required_value(row, name)))
 
     values.extend(
         [
@@ -37,5 +54,5 @@ def rows_to_matrix(rows: list[dict[str, str]], target: str) -> tuple[list[list[f
     x, y = [], []
     for row in rows:
         x.append(row_to_features(row))
-        y.append(float(row[target]))
+        y.append(float(_get_required_value(row, target)))
     return x, y

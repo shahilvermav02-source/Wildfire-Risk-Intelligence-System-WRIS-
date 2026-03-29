@@ -44,6 +44,10 @@ def download_csv(url: str, output_path: str | Path, timeout: int = 30) -> Path:
 
 
 def load_rows(path: str | Path) -> list[dict[str, str]]:
-    with Path(path).open("r", encoding="utf-8", newline="") as f:
+    with Path(path).open("r", encoding="utf-8-sig", newline="") as f:
         reader = csv.DictReader(f)
-        return list(reader)
+        rows = []
+        for row in reader:
+            cleaned = {str(k).strip(): str(v).strip() for k, v in row.items() if k is not None}
+            rows.append(cleaned)
+        return rows
