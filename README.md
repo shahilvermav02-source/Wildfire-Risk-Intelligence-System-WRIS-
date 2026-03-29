@@ -67,7 +67,7 @@ curl -X POST "http://127.0.0.1:8000/predict" \
   }'
 ```
 
-## Deploy with Docker
+## Deploy with Docker (Local)
 
 ```bash
 docker build -t wris:latest .
@@ -75,3 +75,28 @@ docker run --rm -p 8000:8000 wris:latest
 ```
 
 Then open `http://127.0.0.1:8000/gui`.
+
+## Deploy from GitHub (CI/CD)
+
+This repo now includes GitHub Actions workflows:
+
+- `.github/workflows/ci.yml`
+  - Runs tests on every push and pull request.
+- `.github/workflows/docker-ghcr.yml`
+  - Builds Docker image and pushes to GHCR (`ghcr.io/<owner>/<repo>`) when pushing to `main`.
+
+### Steps
+
+1. Push project to GitHub.
+2. Ensure `main` branch exists.
+3. Go to **GitHub → Actions** and verify workflows run.
+4. After `docker-ghcr` succeeds, your image is available on GHCR.
+
+### Run deployed image from GHCR
+
+```bash
+docker pull ghcr.io/<owner>/<repo>:main
+docker run --rm -p 8000:8000 ghcr.io/<owner>/<repo>:main
+```
+
+Now your app runs from the image built automatically from GitHub.
