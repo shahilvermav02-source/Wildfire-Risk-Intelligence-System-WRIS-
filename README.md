@@ -11,11 +11,16 @@ A complete mini ML + API + GUI project for wildfire risk prediction.
 
 ---
 
+
+## 0) Quick Colab Run
+
+Use the ready file: `COLAB.md` (single-cell run).
+
 ## 1) Clone from GitHub
 
 ```bash
-git clone <YOUR_REPO_URL>
-cd <YOUR_REPO_FOLDER>
+git clone https://github.com/shahilvermav02-source/Wildfire-Risk-Intelligence-System-WRIS-.git
+cd Wildfire-Risk-Intelligence-System-WRIS-
 ```
 
 If using branch from Codex:
