@@ -48,6 +48,8 @@ chmod +x run_local.sh
 Open GUI:
 - `http://127.0.0.1:8000/gui`
 
+If model artifact is missing, API now auto-downloads data and trains on first prediction request.
+
 ---
 
 ## 3) Manual run (step-by-step)

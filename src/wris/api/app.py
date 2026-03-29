@@ -7,6 +7,8 @@ from pathlib import Path
 
 from wris.api.schemas import PredictRequest
 from wris.config.settings import load_settings
+from wris.data.ingestion import download_csv, load_rows
+from wris.models.training import save_artifacts, train_and_evaluate
 from wris.services.inference import RiskService
 
 settings = load_settings()
@@ -14,11 +16,32 @@ service: RiskService | None = None
 STATIC_DIR = Path(__file__).resolve().parent / "static"
 
 
+def _bootstrap_model_if_missing() -> None:
+    if settings.artifacts.model_path.exists():
+        return
+
+    # End-to-end bootstrap when user opens GUI before running training script.
+    download_csv(settings.data.url, settings.data.raw_path)
+    rows = load_rows(settings.data.raw_path)
+    model, metrics = train_and_evaluate(
+        rows=rows,
+        target=settings.model.target,
+        test_size=settings.model.test_size,
+        random_state=settings.model.random_state,
+        k_neighbors=settings.model.k_neighbors,
+    )
+    save_artifacts(
+        model=model,
+        metrics=metrics,
+        model_path=settings.artifacts.model_path,
+        metrics_path=settings.artifacts.metrics_path,
+    )
+
+
 def get_service() -> RiskService:
     global service
     if service is None:
-        if not settings.artifacts.model_path.exists():
-            raise RuntimeError("Model artifact not found. Run: python scripts/train_model.py")
+        _bootstrap_model_if_missing()
         service = RiskService(settings.artifacts.model_path)
     return service
 
