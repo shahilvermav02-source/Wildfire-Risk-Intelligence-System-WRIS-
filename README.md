@@ -2,19 +2,18 @@
 
 A complete mini ML + API + GUI project for wildfire risk prediction.
 
-## ✅ What is fixed in this rebuild
+## ✅ Stable Run Design (Codespaces-friendly)
 
-- Runs from source without manual `PYTHONPATH` tweaks.
-- Works after cloning from GitHub (local scripts bootstrap path automatically).
-- Includes one-command run scripts for Linux/macOS and Windows PowerShell.
-- Includes GitHub Actions CI + Docker publish workflow.
+- No mandatory editable install for running.
+- Uses stdlib-only runtime and `PYTHONPATH=src` execution.
+- One-command scripts for Linux/macOS (`run_local.sh`) and Windows (`run_local.ps1`).
+- GitHub Actions CI runs tests without packaging/install friction.
 
 ---
 
-
 ## 0) Quick Colab Run
 
-Use the ready file: `COLAB.md` (single-cell run).
+Use `COLAB.md` for one-cell execution.
 
 ## 1) Clone from GitHub
 
@@ -33,36 +32,32 @@ git checkout codex/build-wildfire-risk-intelligence-system
 
 ## 2) Quick run (recommended)
 
-### Linux / macOS
+### Linux / macOS / GitHub Codespaces
 
 ```bash
+chmod +x run_local.sh
 ./run_local.sh
 ```
 
 ### Windows PowerShell
 
 ```powershell
-./run_local.ps1
+.\run_local.ps1
 ```
 
-These scripts do all steps: create venv, install, download data, train model, run API.
+Open GUI:
+- `http://127.0.0.1:8000/gui`
 
 ---
 
 ## 3) Manual run (step-by-step)
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate
-python -m pip install --upgrade pip setuptools wheel
-pip install -e . --no-build-isolation
+export PYTHONPATH="$(pwd)/src"
 python scripts/download_data.py
 python scripts/train_model.py
 python scripts/run_api.py
 ```
-
-Open GUI:
-- `http://127.0.0.1:8000/gui`
 
 ---
 
@@ -97,4 +92,3 @@ Open:
 - UCI Forest Fires:  
   `https://archive.ics.uci.edu/ml/machine-learning-databases/forest-fires/forestfires.csv`
 - If blocked, system uses embedded fallback sample automatically.
-

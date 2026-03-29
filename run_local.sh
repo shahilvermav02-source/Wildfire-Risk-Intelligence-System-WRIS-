@@ -1,10 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-python -m venv .venv
-source .venv/bin/activate
-python -m pip install --upgrade pip setuptools wheel
-pip install -e . --no-build-isolation
+export PYTHONPATH="$(pwd)/src:${PYTHONPATH:-}"
 
 python scripts/download_data.py
 python scripts/train_model.py

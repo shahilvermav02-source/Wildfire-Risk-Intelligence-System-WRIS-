@@ -1,10 +1,7 @@
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-py -3.11 -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip setuptools wheel
-pip install -e . --no-build-isolation
+$env:PYTHONPATH = "$PWD/src" + $(if ($env:PYTHONPATH) { ";$env:PYTHONPATH" } else { "" })
 
 python scripts/download_data.py
 python scripts/train_model.py

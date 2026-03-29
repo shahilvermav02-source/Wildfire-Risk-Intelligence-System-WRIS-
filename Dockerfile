@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY . /app
 
-RUN pip install --no-cache-dir -e . --no-build-isolation
+ENV PYTHONPATH=/app/src
 
 EXPOSE 8000
 

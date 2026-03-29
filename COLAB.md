@@ -6,8 +6,8 @@ Copy and run this cell in Google Colab:
 !git clone -b codex/build-wildfire-risk-intelligence-system https://github.com/shahilvermav02-source/Wildfire-Risk-Intelligence-System-WRIS-.git wris
 %cd /content/wris
 
-!python -m pip install --upgrade pip
-!pip install -e . --no-build-isolation
+import os
+os.environ['PYTHONPATH'] = '/content/wris/src'
 
 !python scripts/download_data.py
 !python scripts/train_model.py
