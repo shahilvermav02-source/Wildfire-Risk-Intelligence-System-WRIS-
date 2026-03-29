@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import socket
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
@@ -16,11 +17,29 @@ service: RiskService | None = None
 STATIC_DIR = Path(__file__).resolve().parent / "static"
 
 
+class ReusableHTTPServer(HTTPServer):
+    allow_reuse_address = True
+
+
+def _is_port_available(host: str, port: int) -> bool:
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        sock.settimeout(0.3)
+        return sock.connect_ex((host, port)) != 0
+
+
+def _find_open_port(host: str, preferred: int, max_tries: int = 20) -> int:
+    for candidate in range(preferred, preferred + max_tries):
+        if _is_port_available(host, candidate):
+            return candidate
+    raise RuntimeError(
+        f"No available port found in range {preferred}-{preferred + max_tries - 1}."
+    )
+
+
 def _bootstrap_model_if_missing() -> None:
     if settings.artifacts.model_path.exists():
         return
 
-    # End-to-end bootstrap when user opens GUI before running training script.
     download_csv(settings.data.url, settings.data.raw_path)
     rows = load_rows(settings.data.raw_path)
     model, metrics = train_and_evaluate(
@@ -106,6 +125,10 @@ class WRISRequestHandler(BaseHTTPRequestHandler):
 
 
 def run_server(host: str = "127.0.0.1", port: int = 8000) -> None:
-    server = HTTPServer((host, port), WRISRequestHandler)
-    print(f"WRIS API + GUI serving on http://{host}:{port}")
+    chosen_port = _find_open_port(host, port)
+    if chosen_port != port:
+        print(f"Port {port} is busy. Using available port {chosen_port} instead.")
+
+    server = ReusableHTTPServer((host, chosen_port), WRISRequestHandler)
+    print(f"WRIS API + GUI serving on http://{host}:{chosen_port}")
     server.serve_forever()

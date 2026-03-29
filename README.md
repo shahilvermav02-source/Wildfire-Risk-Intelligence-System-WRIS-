@@ -48,6 +48,8 @@ chmod +x run_local.sh
 Open GUI:
 - `http://127.0.0.1:8000/gui`
 
+If port 8000 is busy, WRIS automatically picks the next free port (e.g., 8001) and prints it in terminal.
+
 If model artifact is missing, API now auto-downloads data and trains on first prediction request.
 
 ---
@@ -58,7 +60,7 @@ If model artifact is missing, API now auto-downloads data and trains on first pr
 export PYTHONPATH="$(pwd)/src"
 python scripts/download_data.py
 python scripts/train_model.py
-python scripts/run_api.py
+PORT=8001 python scripts/run_api.py   # optional custom port
 ```
 
 ---
