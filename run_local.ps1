@@ -3,7 +3,7 @@ $ErrorActionPreference = 'Stop'
 
 py -3.11 -m venv .venv
 .\.venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
+python -m pip install --upgrade pip setuptools wheel
 pip install -e . --no-build-isolation
 
 python scripts/download_data.py

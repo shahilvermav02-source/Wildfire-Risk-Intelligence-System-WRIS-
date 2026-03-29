@@ -3,7 +3,7 @@ set -euo pipefail
 
 python -m venv .venv
 source .venv/bin/activate
-python -m pip install --upgrade pip
+python -m pip install --upgrade pip setuptools wheel
 pip install -e . --no-build-isolation
 
 python scripts/download_data.py
